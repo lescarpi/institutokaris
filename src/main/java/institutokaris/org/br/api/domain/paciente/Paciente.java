@@ -1,6 +1,8 @@
 package institutokaris.org.br.api.domain.paciente;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,10 +21,13 @@ public class Paciente {
     private Long id;
 
     private String nome;
+
     private String cpf;
 
     public Paciente(DadosCadastroPaciente dados) {
-        this.cpf = dados.cpf();
+
+                                    // Retira máscara do CPF
+        this.cpf = dados.cpf().replaceAll("[^0-9]", "");
         this.nome = dados.nome();
     }
 
