@@ -1,4 +1,4 @@
-package institutokaris.org.br.api.domain.atendimento;
+package institutokaris.org.br.api.domain.tratamento;
 
 import institutokaris.org.br.api.domain.paciente.Paciente;
 import jakarta.persistence.*;
@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Table(name = "atendimentos")
-@Entity(name = "Atendimento")
+@Table(name = "tratamentos")
+@Entity(name = "Tratamento")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Atendimento {
+public class Tratamento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,12 +25,13 @@ public class Atendimento {
     @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
-    private LocalDate data;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
     private String especialidade;
 
-    public Atendimento(Paciente paciente, String especialidade) {
+    public Tratamento(Paciente paciente, String especialidade) {
         this.paciente = paciente;
-        data = LocalDate.now();
+        dataInicio = LocalDate.now();
         this.especialidade = especialidade;
     }
 

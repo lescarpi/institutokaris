@@ -1,4 +1,4 @@
-package institutokaris.org.br.api.domain.atendimento;
+package institutokaris.org.br.api.domain.tratamento;
 
 import institutokaris.org.br.api.domain.exception.ValidacaoException;
 import institutokaris.org.br.api.domain.paciente.Paciente;
@@ -7,28 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegistraAtendimentoService {
-
-
-    private final PacienteRepository pacienteRepository;
+public class IniciaTratamentoService {
 
     @Autowired
-    private AtendimentoRepository atendimentoRepository;
+    private PacienteRepository pacienteRepository;
 
     @Autowired
-    public RegistraAtendimentoService(PacienteRepository pacienteRepository) {
-        this.pacienteRepository = pacienteRepository;
-    }
+    private TratamentoRepository tratamentoRepository;
 
-    public void registrar(DadosRegistroAtendimento dados) {
+    public void registrar(DadosInicioTratamento dados) {
         if (!pacienteRepository.existsByCpf(dados.cpf())) {
             throw new ValidacaoException("Não existe paciente com esse CPF!");
         }
 
         Paciente paciente = pacienteRepository.findByCpf(dados.cpf());
-        Atendimento atendimento = new Atendimento(paciente, dados.especialidade());
+        Tratamento tratamento = new Tratamento(paciente, dados.especialidade());
 
-        atendimentoRepository.save(atendimento);
+        tratamentoRepository.save(tratamento);
     }
 
 }
