@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IniciaTratamentoService {
+public class TratamentoService {
 
     @Autowired
     private PacienteRepository pacienteRepository;
@@ -15,15 +15,22 @@ public class IniciaTratamentoService {
     @Autowired
     private TratamentoRepository tratamentoRepository;
 
-    public void registrar(DadosInicioTratamento dados) {
+    public void iniciar(DadosInicioTratamento dados) {
         if (!pacienteRepository.existsByCpf(dados.cpf())) {
             throw new ValidacaoException("Não existe paciente com esse CPF!");
         }
-
         Paciente paciente = pacienteRepository.findByCpf(dados.cpf());
         Tratamento tratamento = new Tratamento(paciente, dados.especialidade());
 
         tratamentoRepository.save(tratamento);
+    }
+
+    public void finalizar(Long id) {
+        if (!tratamentoRepository.existsById(id)) {
+            throw new ValidacaoException("Não existe tratamento com esse ID!");
+        }
+        Tratamento tratamento = tratamentoRepository.getReferenceById(id);
+        tratamento.finalizar();
     }
 
 }

@@ -1,24 +1,28 @@
 package institutokaris.org.br.api.controller;
 
 import institutokaris.org.br.api.domain.tratamento.DadosInicioTratamento;
-import institutokaris.org.br.api.domain.tratamento.IniciaTratamentoService;
+import institutokaris.org.br.api.domain.tratamento.TratamentoService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tratamentos")
 public class TratamentoController {
 
     @Autowired
-    private IniciaTratamentoService service;
+    private TratamentoService service;
 
     @PostMapping("/inicio")
-    public void registrar(@RequestBody @Valid DadosInicioTratamento dados) {
-        service.registrar(dados);
+    @Transactional
+    public void iniciar(@RequestBody @Valid DadosInicioTratamento dados) {
+        service.iniciar(dados);
     }
 
+    @DeleteMapping("/finalizar/{id}")
+    @Transactional
+    public void finalizar(@PathVariable Long id) {
+        service.finalizar(id);
+    }
 }

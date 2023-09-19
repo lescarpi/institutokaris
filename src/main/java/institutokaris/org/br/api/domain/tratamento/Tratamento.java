@@ -29,10 +29,19 @@ public class Tratamento {
     private LocalDate dataFim;
     private String especialidade;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     public Tratamento(Paciente paciente, String especialidade) {
         this.paciente = paciente;
         dataInicio = LocalDate.now();
         this.especialidade = especialidade;
+        this.status = Status.EM_ANDAMENTO;
+    }
+
+    public void finalizar() {
+        this.status = Status.FINALIZADO;
+        this.dataFim = LocalDate.now();
     }
 
 }
