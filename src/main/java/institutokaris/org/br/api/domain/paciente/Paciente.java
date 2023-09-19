@@ -23,7 +23,10 @@ public class Paciente {
     private Long id;
 
     private String nome;
+
+    @Column(unique = true)
     private String cpf;
+
     private String logradouro;
     private String bairro;
     private String telefone;
@@ -35,7 +38,7 @@ public class Paciente {
 
     public Paciente(DadosCadastroPaciente dados) {
         this.nome = dados.nome();
-                                    // Retira máscara do CPF
+        // Retira máscara do CPF
         this.cpf = dados.cpf().replaceAll("[^0-9]", "");
         this.logradouro = dados.logradouro();
         this.bairro = dados.bairro();
