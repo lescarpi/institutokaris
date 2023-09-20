@@ -13,6 +13,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/voluntarios")
 public class VoluntarioController {
@@ -27,9 +28,9 @@ public class VoluntarioController {
         repository.save(voluntario);
     }
 
-    @GetMapping("/detalhe/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        Voluntario voluntario = repository.getReferenceById(id);
+    @GetMapping("/detalhe/{cpf}")
+    public ResponseEntity detalhar(@PathVariable String cpf) {
+        Voluntario voluntario = repository.getReferenceByCpf(cpf);
 
         return ResponseEntity.ok(new DadosDetalheVoluntario(voluntario));
     }
