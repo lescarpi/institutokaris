@@ -1,5 +1,6 @@
 package institutokaris.org.br.api.controller;
 
+import institutokaris.org.br.api.domain.exception.ValidacaoException;
 import institutokaris.org.br.api.domain.voluntario.DadosCadastroVoluntario;
 import institutokaris.org.br.api.domain.voluntario.DadosDetalheVoluntario;
 import institutokaris.org.br.api.domain.voluntario.Voluntario;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
@@ -30,9 +33,13 @@ public class VoluntarioController {
 
     @GetMapping("/detalhe/{cpf}")
     public ResponseEntity detalhar(@PathVariable String cpf) {
-        Voluntario voluntario = repository.getReferenceByCpf(cpf);
+        Optional<Voluntario> voluntario = repository.getReferenceByCpf(cpf);
 
-        return ResponseEntity.ok(new DadosDetalheVoluntario(voluntario));
+        if(voluntario.isEmpty()) {
+            throw new ValidacaoException("CPF não encontrado!");
+        }
+
+        return ResponseEntity.ok(new DadosDetalheVoluntario(voluntario.get()));
     }
 
     @GetMapping("lista")

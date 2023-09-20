@@ -37,10 +37,17 @@ function cadastrar() {
     cpf: cpf.value,
     instituicao: instituicao.value
   }).then((response) => {
+    limparForm();
     console.log(response);
   }).catch((error) => {
     console.log(error.response)
   })
+}
+
+function limparForm() {
+  nome.value = '';
+  cpf.value = '';
+  instituicao.value = '';
 }
 </script>
 

@@ -28,9 +28,10 @@ const info = ref('');
 
 function buscar() {
       api.get(`voluntarios/detalhe/${cpf.value}`).then((response) => {
+            cpf.value = '';
             info.value = response.data;
       }).catch((error) => {
-            console.log(error);
+            alert(error.response.data);
       })
 }
 </script>
