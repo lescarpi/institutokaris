@@ -7,7 +7,11 @@
           <li v-for="paciente in pacientes" :key="paciente.id">
             Nome: {{ paciente.nome }} <br />
             CPF: {{ paciente.cpf }}
-            <router-link :to="'/pacientes/detalhe/' + paciente.cpf" custom v-slot="{ navigate }">
+            <router-link
+              :to="'/pacientes/detalhe?cpf=' + paciente.cpf"
+              custom
+              v-slot="{ navigate }"
+            >
               <button @click="navigate" role="link" id="detalhe">></button>
             </router-link>
           </li>

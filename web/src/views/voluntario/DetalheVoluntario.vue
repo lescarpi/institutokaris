@@ -22,10 +22,17 @@
 <script setup>
 import api from "@/config/api";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
 const cpf = ref("");
 const info = ref("");
 const mostrar = ref(false);
+const route = useRoute();
+
+if (route.query.cpf) {
+  cpf.value = route.query.cpf;
+  buscar();
+}
 
 function buscar() {
   api

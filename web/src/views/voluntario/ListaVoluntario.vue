@@ -6,8 +6,14 @@
         <ol>
           <li v-for="voluntario in voluntarios" :key="voluntario.id">
             Nome: {{ voluntario.nome }} <br />
-            CPF: {{ voluntario.cpf }} <br />
-            Instituição de Ensino: {{ voluntario.instituicao }}
+            CPF: {{ voluntario.cpf }}
+            <router-link
+              :to="'/voluntarios/detalhe?cpf=' + voluntario.cpf"
+              custom
+              v-slot="{ navigate }"
+            >
+              <button @click="navigate" role="link" id="detalhe">></button>
+            </router-link>
           </li>
         </ol>
       </div>
@@ -48,5 +54,14 @@ ol li {
   margin-left: 25%;
   width: 50%;
   padding: 15px;
+}
+
+#detalhe {
+  border-radius: 50%;
+  float: inline-end;
+  background-color: #222;
+  color: aliceblue;
+  cursor: pointer;
+  padding: 5px;
 }
 </style>
