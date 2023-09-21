@@ -1,5 +1,6 @@
 package institutokaris.org.br.api.controller;
 
+import institutokaris.org.br.api.domain.exception.ValidacaoException;
 import institutokaris.org.br.api.domain.paciente.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/pacientes")
@@ -24,11 +27,15 @@ public class PacienteController {
         repository.save(paciente);
     }
 
-    @GetMapping("/detalhe/{id}")
-    public ResponseEntity<?> detalhar(@PathVariable Long id) {
-        Paciente paciente = repository.getReferenceById(id);
+    @GetMapping("/detalhe/{cpf}")
+    public ResponseEntity<?> detalhar(@PathVariable String cpf) {
+        Optional<Paciente> paciente = repository.getReferenceByCpf(cpf);
 
-        return ResponseEntity.ok(new DadosDetalhePaciente(paciente));
+        if(paciente.isEmpty()) {
+            throw new ValidacaoException("CPF não encontrado!");
+        }
+
+        return ResponseEntity.ok(new DadosDetalhePaciente(paciente.get()));
     }
 
     @GetMapping("/lista")

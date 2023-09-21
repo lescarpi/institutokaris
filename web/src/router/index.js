@@ -4,6 +4,8 @@ import CadastroVoluntarioView from "../views/voluntario/CadastroVoluntario.vue";
 import DetalheVoluntarioView from "../views/voluntario/DetalheVoluntario.vue";
 import ListaVoluntarioView from "../views/voluntario/ListaVoluntario.vue";
 import CadastroPacienteView from "../views/paciente/CadastroPaciente.vue";
+import DetalhePacienteView from "../views/paciente/DetalhePaciente.vue";
+import ListaPacienteView from "../views/paciente/ListaPaciente.vue";
 
 const routes = [
   {
@@ -14,22 +16,32 @@ const routes = [
   {
     path: "/voluntarios/cadastro",
     name: "CadastroVoluntario",
-    component: CadastroVoluntarioView
+    component: CadastroVoluntarioView,
   },
   {
     path: "/voluntarios/detalhe",
     name: "DetalheVoluntario",
-    component: DetalheVoluntarioView
+    component: DetalheVoluntarioView,
   },
   {
     path: "/voluntarios/lista",
     name: "ListaVoluntario",
-    component: ListaVoluntarioView
+    component: ListaVoluntarioView,
   },
   {
     path: "/pacientes/cadastro",
     name: "CadastroPaciente",
-    component: CadastroPacienteView
+    component: CadastroPacienteView,
+  },
+  {
+    path: "/pacientes/detalhe",
+    name: "DetalhePaciente",
+    component: DetalhePacienteView,
+  },
+  {
+    path: "/pacientes/lista",
+    name: "ListaPaciente",
+    component: ListaPacienteView
   }
 ];
 

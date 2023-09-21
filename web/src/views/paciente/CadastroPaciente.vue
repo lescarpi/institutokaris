@@ -150,7 +150,7 @@ function limparForm() {
 }
 </script>
 
-<style scoped>
+<style>
 #paciente-form {
   max-width: 30%;
   margin: 0 auto;
