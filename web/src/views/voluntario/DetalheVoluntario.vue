@@ -11,7 +11,7 @@
         </div>
       </form>
     </div>
-    <div v-if="mostrar">
+    <div class="detalhe-container" v-if="mostrar">
       <p>Nome: {{ info.nome }}</p>
       <p>CPF: {{ info.cpf }}</p>
       <p>Instituição de Ensino: {{ info.instituicao }}</p>
@@ -48,4 +48,12 @@ function limparForm() {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.detalhe-container {
+  border: 2px solid #222;
+  margin: 15px;
+  margin-left: 25%;
+  width: 50%;
+  padding: 15px;
+}
+</style>

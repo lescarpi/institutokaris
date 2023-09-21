@@ -3,6 +3,7 @@ import HomeView from "../views/HomeView.vue";
 import CadastroVoluntarioView from "../views/voluntario/CadastroVoluntario.vue";
 import DetalheVoluntarioView from "../views/voluntario/DetalheVoluntario.vue";
 import ListaVoluntarioView from "../views/voluntario/ListaVoluntario.vue";
+import CadastroPacienteView from "../views/paciente/CadastroPaciente.vue";
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: "/voluntarios/lista",
     name: "ListaVoluntario",
     component: ListaVoluntarioView
+  },
+  {
+    path: "/pacientes/cadastro",
+    name: "CadastroPaciente",
+    component: CadastroPacienteView
   }
 ];
 

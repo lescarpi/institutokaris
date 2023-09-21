@@ -39,7 +39,6 @@ h2 {
   margin-bottom: 15px;
   color: #222;
   padding: 5px 10px;
-  border-bottom: 4px solid #222;
 }
 
 ol li {

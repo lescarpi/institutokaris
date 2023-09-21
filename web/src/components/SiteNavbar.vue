@@ -2,6 +2,7 @@
   <nav id="navbar">
     <router-link to="/">Home</router-link>
     <router-link to="/voluntarios/cadastro">Cadastro Voluntário</router-link>
+    <router-link to="/pacientes/cadastro">Cadastro Paciente</router-link>
   </nav>
 </template>
 

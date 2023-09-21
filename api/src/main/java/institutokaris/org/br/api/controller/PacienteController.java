@@ -25,7 +25,7 @@ public class PacienteController {
     }
 
     @GetMapping("/detalhe/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
+    public ResponseEntity<?> detalhar(@PathVariable Long id) {
         Paciente paciente = repository.getReferenceById(id);
 
         return ResponseEntity.ok(new DadosDetalhePaciente(paciente));

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/voluntarios")
 public class VoluntarioController {
@@ -32,7 +31,7 @@ public class VoluntarioController {
     }
 
     @GetMapping("/detalhe/{cpf}")
-    public ResponseEntity detalhar(@PathVariable String cpf) {
+    public ResponseEntity<?> detalhar(@PathVariable String cpf) {
         Optional<Voluntario> voluntario = repository.getReferenceByCpf(cpf);
 
         if(voluntario.isEmpty()) {

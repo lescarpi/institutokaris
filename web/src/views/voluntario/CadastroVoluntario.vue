@@ -8,7 +8,7 @@
           <input
             type="text"
             id="nome"
-            v-model="nome"
+            v-model="info.nome"
             placeholder="Digite seu nome completo"
           />
         </div>
@@ -17,7 +17,7 @@
           <input
             type="text"
             id="cpf"
-            v-model="cpf"
+            v-model="info.cpf"
             placeholder="Digite seu CPF"
           />
         </div>
@@ -26,7 +26,7 @@
           <input
             type="text"
             id="instituicao"
-            v-model="instituicao"
+            v-model="info.instituicao"
             placeholder="Digite o nome de sua instituição de ensino"
           />
         </div>
@@ -40,22 +40,23 @@
 
 <script setup>
 import api from "@/config/api";
-import { ref } from "vue";
 
-const nome = ref("");
-const cpf = ref("");
-const instituicao = ref("");
+const info = {
+  nome: '',
+  cpf: '',
+  instituicao: ''
+}
 
 function cadastrar() {
   api
     .post("/voluntarios/cadastro", {
-      nome: nome.value,
-      cpf: cpf.value,
-      instituicao: instituicao.value,
+      nome: info.nome,
+      cpf: info.cpf,
+      instituicao: info.instituicao,
     })
     .then((response) => {
-      limparForm();
       console.log(response);
+      limparForm();
     })
     .catch((error) => {
       console.log(error.response);
@@ -63,10 +64,13 @@ function cadastrar() {
 }
 
 function limparForm() {
-  nome.value = "";
-  cpf.value = "";
-  instituicao.value = "";
+  for (const campo in info) {
+    if (Object.prototype.hasOwnProperty.call(info, campo)) {
+      document.getElementById(campo).value = '';
+    }
+  }
 }
+
 </script>
 
 <style>
@@ -103,5 +107,11 @@ input {
   font-size: 16px;
   margin: 0 auto;
   cursor: pointer;
+  box-shadow: 7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+  transition: 0.2s all;
 }
+.submit-btn:active {
+            transform: scale(0.98);
+            box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
+        }
 </style>
