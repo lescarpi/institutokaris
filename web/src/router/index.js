@@ -3,9 +3,11 @@ import HomeView from "../views/HomeView.vue";
 import CadastroVoluntarioView from "../views/voluntario/CadastroVoluntario.vue";
 import DetalheVoluntarioView from "../views/voluntario/DetalheVoluntario.vue";
 import ListaVoluntarioView from "../views/voluntario/ListaVoluntario.vue";
+import HomeVoluntarioView from "../views/voluntario/HomeVoluntario.vue";
 import CadastroPacienteView from "../views/paciente/CadastroPaciente.vue";
 import DetalhePacienteView from "../views/paciente/DetalhePaciente.vue";
 import ListaPacienteView from "../views/paciente/ListaPaciente.vue";
+import HomePacienteView from "../views/paciente/HomePaciente.vue";
 
 const routes = [
   {
@@ -29,6 +31,11 @@ const routes = [
     component: ListaVoluntarioView,
   },
   {
+    path: "/voluntarios",
+    name: "HomeVoluntario",
+    component: HomeVoluntarioView
+  },
+  {
     path: "/pacientes/cadastro",
     name: "CadastroPaciente",
     component: CadastroPacienteView,
@@ -42,6 +49,11 @@ const routes = [
     path: "/pacientes/lista",
     name: "ListaPaciente",
     component: ListaPacienteView
+  },
+  {
+    path: "/pacientes",
+    name: "HomePaciente",
+    component: HomePacienteView
   }
 ];
 
