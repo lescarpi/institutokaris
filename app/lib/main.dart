@@ -1,51 +1,106 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-void main() {
-  runApp(const MyApp());
+import 'package:app/models/paciente.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyAppState extends State<MyApp> {
+  late Future<Paciente> paciente;
+
+  @override
+  void initState() {
+    super.initState();
+    paciente = fetchPaciente();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Instituto Karis',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Instituto Karis'),
-    );
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+        ),
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Instituto Karis'),
+            actions: <Widget>[
+              IconButton(
+                icon: const Icon(Icons.person),
+                tooltip: 'Pacientes',
+                onPressed: () {},
+              )
+            ],
+          ),
+          body: Center(
+              child: FutureBuilder<Paciente>(
+            future: paciente,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.nome);
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+              return const CircularProgressIndicator();
+            },
+          )),
+        ));
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  void _incrementCounter() {
-    setState(() {});
-  }
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<_MyAppState>();
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        title: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-        ),
+        title: const Text('Instituto Karis'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: 'Pacientes',
+            onPressed: () {},
+          )
+        ],
       ),
+      body: Center(
+          child: FutureBuilder<Paciente>(
+        future: appState.paciente,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            print(snapshot.data!.nome);
+            return Text(snapshot.data!.nome);
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+          return const CircularProgressIndicator();
+        },
+      )),
     );
+  }
+}
+
+//class PacienteCard extends StatelessWidget {}
+
+Future<Paciente> fetchPaciente() async {
+  final response = await http
+      .get(Uri.parse('http://localhost:8181/pacientes/detalhe/12312312312'));
+
+  if (response.statusCode == 200) {
+    return Paciente.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Falha ao carregar Paciente');
   }
 }
