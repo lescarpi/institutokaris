@@ -1,11 +1,13 @@
 package institutokaris.org.br.api.domain.atendimento;
 
 import institutokaris.org.br.api.domain.exception.ValidacaoException;
+import institutokaris.org.br.api.domain.paciente.Paciente;
 import institutokaris.org.br.api.domain.paciente.PacienteRepository;
 import institutokaris.org.br.api.domain.tratamento.Tratamento;
-import institutokaris.org.br.api.domain.tratamento.TratamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 public class RegistraAtendimentoService {
@@ -14,14 +16,15 @@ public class RegistraAtendimentoService {
     private AtendimentoRepository atendimentoRepository;
 
     @Autowired
-    private TratamentoRepository tratamentoRepository;
+    private PacienteRepository pacienteRepository;
 
     public void registrar(DadosRegistroAtendimento dados) {
-        if (!tratamentoRepository.existsById(dados.tratamentoId())) {
-            throw new ValidacaoException("Não existe tratamento com esse ID");
+        if (!pacienteRepository.existsById(dados.pacienteId())) {
+            throw new ValidacaoException("Não existe paciente com esse ID");
         }
-        Tratamento tratamento = tratamentoRepository.getReferenceById(dados.tratamentoId());
-        Atendimento atendimento = new Atendimento(tratamento, dados.descricao());
+        Paciente paciente = pacienteRepository.getReferenceById(dados.pacienteId());
+        Atendimento atendimento = new Atendimento(paciente, dados.descricao());
+        atendimento.setData(LocalDate.now());
 
         atendimentoRepository.save(atendimento);
     }

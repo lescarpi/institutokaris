@@ -1,0 +1,1 @@
+alter table atendimentos add descricao varchar(255);
