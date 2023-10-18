@@ -1,5 +1,6 @@
 package institutokaris.org.br.api.domain.paciente;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

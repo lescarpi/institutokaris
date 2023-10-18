@@ -24,7 +24,7 @@ public record DadosCadastroPaciente(
         String telefone,
 
         @NotNull
-        @JsonFormat(pattern = "dd/MM/yyyy")
+        @JsonFormat(pattern = "yyyy-MM-dd")
         LocalDate dataDeNascimento,
 
         @NotNull

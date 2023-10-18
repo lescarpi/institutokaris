@@ -1,106 +1,64 @@
-import 'dart:convert';
+import 'dart:io';
 
-import 'package:app/models/paciente.dart';
+import 'package:app/entities/paciente_entity.dart';
+import 'package:app/pages/edit_paciente_page.dart';
+import 'package:app/pages/lista_pacientes_page.dart';
+import 'package:app/reducers/paciente_reducer.dart';
+import 'package:app/services/http_client_service.dart';
+import 'package:app/services/paciente_service.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
+void main() {
+  runApp(const RootWidget());
 }
 
-class _MyAppState extends State<MyApp> {
-  late Future<Paciente> paciente;
+class RootWidget extends StatefulWidget {
+  const RootWidget({super.key});
+
+  @override
+  State<RootWidget> createState() => _RootWidgetState();
+}
+
+class _RootWidgetState extends State<RootWidget> {
+  final httpClient = HttpClient();
+  late final httpClientService = HttpClientService(httpClient);
+  late final pacienteService = PacienteService(httpClientService);
+  late final reducer;
 
   @override
   void initState() {
     super.initState();
-    paciente = fetchPaciente();
+    reducer = PacienteReducer(pacienteService);
   }
+
+  @override
+  void dispose() {
+    reducer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const MainApp();
+  }
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        ),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Instituto Karis'),
-            actions: <Widget>[
-              IconButton(
-                icon: const Icon(Icons.person),
-                tooltip: 'Pacientes',
-                onPressed: () {},
-              )
-            ],
-          ),
-          body: Center(
-              child: FutureBuilder<Paciente>(
-            future: paciente,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data!.nome);
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-              return const CircularProgressIndicator();
-            },
-          )),
-        ));
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<_MyAppState>();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Instituto Karis'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.person),
-            tooltip: 'Pacientes',
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Center(
-          child: FutureBuilder<Paciente>(
-        future: appState.paciente,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            print(snapshot.data!.nome);
-            return Text(snapshot.data!.nome);
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-          return const CircularProgressIndicator();
+      initialRoute: '/',
+      routes: {
+        '/': (_) => const ListaPacientesPage(),
+        '/cadastrar': (_) => const EditPaciente(),
+        '/editar': (context) {
+          final entity =
+              ModalRoute.of(context)?.settings.arguments as PacienteEntity?;
+          return EditPaciente(entity: entity);
         },
-      )),
+      },
     );
-  }
-}
-
-//class PacienteCard extends StatelessWidget {}
-
-Future<Paciente> fetchPaciente() async {
-  final response = await http
-      .get(Uri.parse('http://localhost:8181/pacientes/detalhe/12312312312'));
-
-  if (response.statusCode == 200) {
-    return Paciente.fromJson(jsonDecode(response.body));
-  } else {
-    throw Exception('Falha ao carregar Paciente');
   }
 }
