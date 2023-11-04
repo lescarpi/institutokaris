@@ -1,100 +1,81 @@
-import 'package:app/atoms/paciente_atom.dart';
-import 'package:app/states/paciente_state.dart';
+import 'package:app2/models/paciente_card.dart';
+import 'package:app2/states/lista_state.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class ListaPacientesPage extends StatefulWidget {
   const ListaPacientesPage({super.key});
 
   @override
-  State<ListaPacientesPage> createState() => _PacientePageState();
+  State<ListaPacientesPage> createState() => _ListaPacientesPageState();
 }
 
-class _PacientePageState extends State<ListaPacientesPage> {
+class _ListaPacientesPageState extends State<ListaPacientesPage> {
+  late ListaState listaState;
+  late List<PacienteCard> pacientes;
+
   @override
   void initState() {
     super.initState();
-
-    pacienteState.value = const StartPacienteState();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      fetchPacientesAction.value = Object();
-    });
+    _fetchData();
   }
 
+  @override
   Widget build(BuildContext context) {
+    listaState = context.watch<ListaState>();
+    pacientes = listaState.pacientes;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pacientes'),
+        centerTitle: true,
+        title: const Text('Lista de Pacientes'),
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: SearchBar(
-              padding: MaterialStatePropertyAll<EdgeInsets>(
-                  EdgeInsets.symmetric(horizontal: 16.0)),
-              leading: Icon(Icons.search),
-              hintText: 'CPF do Paciente...',
-            ),
-          ),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: pacienteState,
-              builder: (context, child) {
-                return switch (pacienteState.value) {
-                  StartPacienteState _ => const SizedBox(),
-                  LoadingPacienteState _ =>
-                    const Center(child: CircularProgressIndicator()),
-                  GettedPacienteState state => _gettedPacientes(state),
-                  FailurePacienteState state => _failure(state),
-                };
-              },
-            ),
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () => _refreshPage(),
+        child: pacientes.isEmpty
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.separated(
+                itemBuilder: (BuildContext context, int index) {
+                  final paciente = pacientes[index];
+                  return ListTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    ),
+                    title: Text(
+                      paciente.nome,
+                    ),
+                    subtitle: Text("CPF: ${paciente.cpf}"),
+                    onTap: () => mostrarDetalhes(paciente.id),
+                  );
+                },
+                padding: const EdgeInsets.all(12),
+                separatorBuilder: (_, ___) => const Divider(),
+                itemCount: pacientes.length,
+              ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _createNewPaciente,
+        onPressed: () => cadastrarPaciente(),
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Widget _gettedPacientes(GettedPacienteState state) {
-    final pacientes = state.pacientes;
-    return ListView.builder(
-      itemCount: pacientes.length,
-      itemBuilder: (_, index) {
-        final paciente = pacientes[index];
-        return ListTile(
-          onTap: () {
-            Navigator.of(context).pushNamed('/editar', arguments: paciente);
-          },
-          title: Text(paciente.nome),
-          subtitle: Text(paciente.cpf),
-          trailing: IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed('/editar', arguments: paciente);
-            },
-            icon: const Icon(Icons.expand_less),
-          ),
-        );
-      },
-    );
+  mostrarDetalhes(int pacienteId) {
+    context.push('/paciente', extra: pacienteId);
   }
 
-  Widget _failure(FailurePacienteState state) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () {
-          fetchPacientesAction.value = Object();
-        },
-        child: Text(state.message),
-      ),
-    );
+  cadastrarPaciente() {
+    context.push('/paciente/cadastro').then((_) => _refreshPage());
   }
 
-  void _createNewPaciente() {
-    Navigator.of(context).pushNamed('/cadastrar');
+  _fetchData() {
+    context.read<ListaState>().getListaPacientes();
+  }
+
+  _refreshPage() {
+    _fetchData();
   }
 }

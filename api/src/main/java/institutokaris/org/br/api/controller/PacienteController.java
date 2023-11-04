@@ -22,17 +22,18 @@ public class PacienteController {
 
     @PostMapping("/cadastro")
     @Transactional
-    public void cadastrar(@RequestBody @Valid DadosCadastroPaciente dados) {
+    public ResponseEntity<?> cadastrar(@RequestBody @Valid DadosCadastroPaciente dados) {
         Paciente paciente = new Paciente(dados);
         repository.save(paciente);
+        return ResponseEntity.ok(new ResponseCadastroPaciente(paciente.getId()));
     }
 
-    @GetMapping("/detalhe/{cpf}")
-    public ResponseEntity<?> detalhar(@PathVariable String cpf) {
-        Optional<Paciente> paciente = repository.getReferenceByCpf(cpf);
+    @GetMapping("/detalhe/{id}")
+    public ResponseEntity<?> detalhar(@PathVariable Long id) {
+        Optional<Paciente> paciente = repository.getReferenceByPacienteId(id);
 
         if(paciente.isEmpty()) {
-            throw new ValidacaoException("CPF não encontrado!");
+            throw new ValidacaoException("ID não encontrado!");
         }
 
         return ResponseEntity.ok(new DadosDetalhePaciente(paciente.get()));

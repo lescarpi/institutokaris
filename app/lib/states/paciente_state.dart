@@ -1,24 +1,42 @@
-import 'package:app/entities/paciente_entity.dart';
+import 'package:app2/models/atendimento.dart';
+import 'package:app2/models/paciente.dart';
+import 'package:app2/services/http_util.dart';
+import 'package:flutter/material.dart';
 
-sealed class PacienteState {
-  const PacienteState();
-}
+class PacienteState extends ChangeNotifier {
+  HttpUtil httpUtil = HttpUtil();
 
-class StartPacienteState extends PacienteState {
-  const StartPacienteState();
-}
+  Paciente _paciente = Paciente.empty();
+  final List<Atendimento> _atendimentos = [];
 
-class GettedPacienteState extends PacienteState {
-  final List<PacienteEntity> pacientes;
+  Paciente get paciente => _paciente;
 
-  const GettedPacienteState(this.pacientes);
-}
+  List<Atendimento> get atendimentos => _atendimentos;
 
-class LoadingPacienteState extends PacienteState {
-  const LoadingPacienteState();
-}
+  getPaciente(int id) async {
+    final response = await httpUtil.get('/pacientes/detalhe/$id');
+    _paciente = Paciente.fromJson(response);
+    notifyListeners();
+  }
 
-class FailurePacienteState extends PacienteState {
-  final String message;
-  const FailurePacienteState(this.message);
+  Future<int> cadastrarPaciente(Paciente paciente) async {
+    final response =
+        await httpUtil.post('/pacientes/cadastro', paciente.toJson());
+    return response['id'];
+  }
+
+  getAtendimentos(int pacienteId) async {
+    _atendimentos.clear();
+    final response = await httpUtil.get('/atendimentos/lista/$pacienteId');
+    for (final atendimento in response as List) {
+      _atendimentos.add(Atendimento.fromJson(atendimento));
+    }
+    notifyListeners();
+  }
+
+  Future<int> registrarAtendimento(Atendimento atendimento) async {
+    final response =
+        await httpUtil.post('/atendimentos/registro', atendimento.toJson());
+    return response['atendimentoId'];
+  }
 }

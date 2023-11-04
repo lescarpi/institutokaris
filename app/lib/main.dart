@@ -1,46 +1,25 @@
-import 'dart:io';
-
-import 'package:app/entities/paciente_entity.dart';
-import 'package:app/pages/edit_paciente_page.dart';
-import 'package:app/pages/lista_pacientes_page.dart';
-import 'package:app/reducers/paciente_reducer.dart';
-import 'package:app/services/http_client_service.dart';
-import 'package:app/services/paciente_service.dart';
+import 'package:app2/models/atendimento.dart';
+import 'package:app2/pages/cadastro_atendimento_page.dart';
+import 'package:app2/pages/cadastro_paciente_page.dart';
+import 'package:app2/pages/detalhe_atendimento_page.dart';
+import 'package:app2/pages/detalhe_paciente_page.dart';
+import 'package:app2/pages/lista_pacientes_page.dart';
+import 'package:app2/states/lista_state.dart';
+import 'package:app2/states/paciente_state.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const RootWidget());
-}
-
-class RootWidget extends StatefulWidget {
-  const RootWidget({super.key});
-
-  @override
-  State<RootWidget> createState() => _RootWidgetState();
-}
-
-class _RootWidgetState extends State<RootWidget> {
-  final httpClient = HttpClient();
-  late final httpClientService = HttpClientService(httpClient);
-  late final pacienteService = PacienteService(httpClientService);
-  late final reducer;
-
-  @override
-  void initState() {
-    super.initState();
-    reducer = PacienteReducer(pacienteService);
-  }
-
-  @override
-  void dispose() {
-    reducer.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const MainApp();
-  }
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ListaState()),
+        ChangeNotifierProvider(create: (context) => PacienteState()),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -48,17 +27,47 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      initialRoute: '/',
-      routes: {
-        '/': (_) => const ListaPacientesPage(),
-        '/cadastrar': (_) => const EditPaciente(),
-        '/editar': (context) {
-          final entity =
-              ModalRoute.of(context)?.settings.arguments as PacienteEntity?;
-          return EditPaciente(entity: entity);
-        },
-      },
+    return MaterialApp.router(
+      routerConfig: _router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
+
+final GoRouter _router = GoRouter(
+  routes: [
+    GoRoute(
+        path: "/",
+        builder: (context, state) => const ListaPacientesPage(),
+        routes: [
+          GoRoute(
+              path: "paciente",
+              builder: (context, state) {
+                final int pacienteId = state.extra! as int;
+                return DetalhePacientePage(pacienteId: pacienteId);
+              },
+              routes: [
+                GoRoute(
+                  path: 'cadastro',
+                  builder: (context, state) => const CadastroPacientePage(),
+                ),
+                GoRoute(
+                    path: 'atendimento',
+                    builder: (context, state) {
+                      final Atendimento atendimento =
+                          state.extra! as Atendimento;
+                      return DetalheAtendimentoPage(atendimento: atendimento);
+                    },
+                    routes: [
+                      GoRoute(
+                          path: 'registro',
+                          builder: (context, state) {
+                            final int pacienteId = state.extra! as int;
+                            return CadastroAtendimentoPage(
+                                pacienteId: pacienteId);
+                          }),
+                    ]),
+              ]),
+        ]),
+  ],
+);

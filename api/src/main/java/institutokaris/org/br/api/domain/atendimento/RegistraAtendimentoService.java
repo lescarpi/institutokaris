@@ -18,7 +18,7 @@ public class RegistraAtendimentoService {
     @Autowired
     private PacienteRepository pacienteRepository;
 
-    public void registrar(DadosRegistroAtendimento dados) {
+    public Long registrar(DadosRegistroAtendimento dados) {
         if (!pacienteRepository.existsById(dados.pacienteId())) {
             throw new ValidacaoException("Não existe paciente com esse ID");
         }
@@ -27,6 +27,7 @@ public class RegistraAtendimentoService {
         atendimento.setData(LocalDate.now());
 
         atendimentoRepository.save(atendimento);
+        return atendimento.getId();
     }
 
 }
